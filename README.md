@@ -60,15 +60,11 @@ For convenience, you can use a `deploy.sh` script to handle setting the environm
 Create a file named `deploy.sh` in the root directory of your project with the following content:
 
 ```bash
-#!/bin/bash
-
-# Check if the environment is provided
 if [ -z "$1" ]; then
   echo "No environment provided. Usage: ./deploy.sh staging|production"
   exit 1
 fi
 
-# Set the environment variable by creating a JavaScript file
 echo "window.currentEnv = '$1';" > public/env.js
 
 # Deploy using Firebase
