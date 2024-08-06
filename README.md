@@ -1,5 +1,4 @@
 
-
 # Affiliate Dashboard
 
 ## Setting Up Firebase Hosting
@@ -52,13 +51,44 @@ firebase target:apply hosting staging your-staging-site-id
 firebase target:apply hosting production your-production-site-id
 ```
 
-### Step 4: Deploying to Different Environments
+### Step 4: Using `deploy.sh` Script for Deployment
 
-Deploy to a specific environment using the following command:
+For convenience, you can use a `deploy.sh` script to handle setting the environment and deploying the project.
+
+#### 1. Create the `deploy.sh` Script
+
+Create a file named `deploy.sh` in the root directory of your project with the following content:
 
 ```bash
-firebase deploy --only hosting:${env}
+#!/bin/bash
+
+# Check if the environment is provided
+if [ -z "$1" ]; then
+  echo "No environment provided. Usage: ./deploy.sh staging|production"
+  exit 1
+fi
+
+# Set the environment variable by creating a JavaScript file
+echo "window.currentEnv = '$1';" > public/env.js
+
+# Deploy using Firebase
+firebase deploy --only hosting:$1
 ```
 
-*Replace `${env}` with either `staging` or `production` depending on where you want to deploy.*
+#### 2. Make the Script Executable
+
+Run the following command to make the script executable:
+
+```bash
+chmod +x deploy.sh
+```
+
+#### 3. Deploy Using the Script
+
+You can now deploy to a specific environment by running the script and passing the environment as an argument:
+
+
+```bash
+./deploy.sh ${env}
+```
 
