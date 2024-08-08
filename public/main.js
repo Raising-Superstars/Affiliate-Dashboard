@@ -114,6 +114,7 @@ loadConfig(currentEnv).then(config => {
 
     function populateRecentPayouts(data) {
         const customerTableBody = document.getElementById('payoutTableBody');
+        console.log(data);
         if (data && data.length > 0) {
             data.forEach((payout, index) => {
                 const row = document.createElement('tr');
@@ -121,24 +122,22 @@ loadConfig(currentEnv).then(config => {
                     <td class="border px-4 py-2">${index + 1}</td>
                     <td class="border px-4 py-2">${formatDate(new Date(payout.created_at))}</td>
                     <td class="border px-4 py-2">${payout.amount}</td>
-                    <td class="border px-4 py-2">${payout.status}</td>
+                   <td class="border px-4 py-2" style="color: ${
+                        payout.status === 'processed' ? 'green' : 
+                        payout.status === 'pending' ? 'blue' : 
+                        payout.status === 'rejected' ? 'red' : 
+                        'black'
+                    };">${payout.display_status}</td>
                 `;
                 customerTableBody.appendChild(row);
             });
-        } else {
-            const row = document.createElement('tr');
-            row.style.color = 'red';
-            row.innerHTML = `
-                <td class="border px-4 py-2 text-center" colspan="3">You currently have no earnings. Start referring now to begin earning rewards!</td>
-            `;
-            customerTableBody.appendChild(row);
-        }
+        } 
     }
 
     fetch(getDashboardDataEndPoints)
         .then(response => response.json())
         .then(data => {
-            if (!data || Object.keys(data).length === 0) {
+            if (!data || Object.keys(data).length === 0 || (data.referees && data.referees.length == 0)) {
                 displayNoDataMessage();
             } else {
                 populateDashboard(data);
@@ -168,15 +167,7 @@ loadConfig(currentEnv).then(config => {
                 `;
                 customerTableBody.appendChild(row);
             });
-        } else {
-            const row = document.createElement('tr');
-            row.style.columnSpan = 3;
-            row.style.color = 'red';
-            row.innerHTML = `
-                <td class="border px-4 py-2 text-center" colspan="3">You currently have no earnings. Start referring now to begin earning rewards!</td>
-            `;
-            customerTableBody.appendChild(row);
-        }
+        } 
 
         const sortByMonth = arr => {
             const getIndexOfMonth = month => months.indexOf(month);
@@ -220,11 +211,23 @@ loadConfig(currentEnv).then(config => {
         .then(response => response.json())
         .then(data1 => {
             if (!data1 || Object.keys(data1).length === 0) {
-                displayNoDataMessage();
+                displayNoPayoutRequestMessage();
             } else {
                 populateRecentPayouts(data1);
             }
         });
+
+        function displayNoPayoutRequestMessage(){
+            const customerTableBody = document.getElementById('payoutTableBody');
+            const row = document.createElement('tr');
+            row.style.columnSpan = 3;
+            row.style.color = 'red';
+            row.innerHTML = `
+                <td class="border px-4 py-2 text-center" colspan="4">You currently have not raised Payout Request.</td>
+            `;
+            customerTableBody.appendChild(row);
+    
+        }
 
     function displayNoDataMessage() {
         document.getElementById('affiliateName').innerText = '';
@@ -239,9 +242,7 @@ loadConfig(currentEnv).then(config => {
         row.style.columnSpan = 3;
         row.style.color = 'red';
         row.innerHTML = `
-            <td class="border px-4 py-
-
-2 text-center" colspan="3">You currently have no earnings. Start referring now to begin earning rewards!</td>
+            <td class="border px-4 py-text-center" colspan="3">You currently have no earnings. Start referring now to begin earning rewards!</td>
         `;
         customerTableBody.appendChild(row);
 
