@@ -4,6 +4,6 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-echo "window.currentEnv = '$1';" > public/env.js
+echo "let currentEnvironment = '$1';" > public/env.js
 
 firebase deploy --only hosting:$1
