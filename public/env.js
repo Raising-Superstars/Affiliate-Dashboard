@@ -1,1 +1,1 @@
-window.currentEnv = 'staging';
+let currentEnvironment = 'staging';
