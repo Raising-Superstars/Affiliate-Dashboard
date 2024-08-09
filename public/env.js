@@ -1,1 +1,1 @@
-let currentEnvironment = 'staging';
+let currentEnvironment = 'production';
